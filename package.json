@@ -71,12 +71,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon server.js",
     "start": "nodemon server.js",
-    "build:w": "webpack --progress --watch",
-    "build:prod": "NODE_ENV=\"production\" webpack --progress",
-    "babel": "babel --watch client/ --out-dir build/",
-    "lint": "eslint **/*.js --cache",
-    "precommit": "npm run lint",
-    "build:emoji-data": "node ./public/chindow/scripts/buildEmojiData.js"
+    "build:w": "webpack --config chindow/webpack.config.js --progress --watch",
+    "build:prod": "NODE_ENV=\"production\" webpack --progress"
   },
   "repository": {
     "type": "git",

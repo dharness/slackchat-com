@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
-import {Launcher} from 'react-chat-window';
+import { Launcher } from 'react-chat-window';
 import messageBroker from './messageBroker';
 
 
@@ -11,6 +11,14 @@ class App extends Component {
     this.state = { messages: [] };
     this.messageBroker = messageBroker;
     this.messageBroker.init();
+    this.onMessageWasSent = this.onMessageWasSent.bind(this);
+  }
+
+  onMessageWasSent(message) {
+    this.messageBroker.sendMessage(message);
+    this.setState({
+      messages: [...this.state.messages, message]
+    })
   }
 
   render() {
@@ -20,8 +28,8 @@ class App extends Component {
         teamName: 'react-live-chat',
         imageUrl: 'https://a.slack-edge.com/66f9/img/avatars-teams/ava_0001-34.png'
       }}
-      onMessageWasSent={()=>{}}
-      messageList={[]}
+      onMessageWasSent={this.onMessageWasSent}
+      messageList={this.state.messages}
       />
     </div>);
   }

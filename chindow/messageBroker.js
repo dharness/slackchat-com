@@ -1,8 +1,8 @@
 import MESSAGE_TYPES from './messageTypes';
+import io from 'socket.io-client';
 const CLIENT = MESSAGE_TYPES.CLIENT;
 const BROKER = MESSAGE_TYPES.BROKER;
 const SOCKET_URL = process.env.SC_SOCKET_URL;
-const io = require('socket.io-client');
 
 
 const messageBroker = {
@@ -21,14 +21,14 @@ const messageBroker = {
     } else { socket.emit(CLIENT.RETURNING_VISITOR, { visitorId, teamId }); }
   },
 
-  sendMessage(msg) {
-    msg.visitorId = this.getVisitorId();
-    msg.teamId = this.getTeamId();
-    this.socket.emit(CLIENT.MESSAGE, msg);
+  sendMessage(message) {
+    message.visitorId = this.getVisitorId();
+    message.teamId = this.getTeamId();
+    this.socket.emit(CLIENT.MESSAGE, message);
   },
 
-  handleIncomingMessage(msg) {
-    this.messageRecievedHandlers.forEach(handle => handle(msg));
+  handleIncomingMessage(message) {
+    this.messageRecievedHandlers.forEach(handle => handle(message));
   },
 
   onMessageReceived(handler) {
@@ -40,18 +40,15 @@ const messageBroker = {
   },
 
   getTeamId() {
-    return 'team_id';
-    // return SlackChat['teamId'];
+    return window.__SLACKCHAT_DATA.teamId;
   },
 
   getTeamName() {
-    return 'team_name';
-    // return SlackChat['teamName'];
+    return window.__SLACKCHAT_DATA.teamName;
   },
 
   getImageUrl() {
-    return 'imgUrl';
-    // return SlackChat['imageUrl'];
+    return window.__SLACKCHAT_DATA.imageUrl;
   },
 
   setVisitorId(data) {

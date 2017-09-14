@@ -8,10 +8,10 @@ const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 module.exports = {
   entry: {
-    chindow: './index.js'
+    chindow: './chindow/index.js'
   },
   output: {
-    filename: '[name].bundle.js',
+    filename: './chindow/[name].bundle.js',
   },
   devtool: 'inline-source-map',
   devServer: {

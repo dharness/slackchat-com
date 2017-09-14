@@ -87,22 +87,17 @@ class SlackBroker {
     });
   }
 
-  forwardMessageToSlack(message) {
+  async forwardMessageToSlack(message) {
     const slackChannelId = message.data.channelId;
     if (slackChannelId) {
       const { teamId } = message.data;
-      Account.findOne({
-        team_id: teamId,
-        'bot.bot_access_token': this.botToken,
-      }).exec().then((account) => {
-        return axios.post(`${SLACK_API_URL}/chat.postMessage`,
-            querystring.stringify({
-              token: account.access_token,
-              channel: slackChannelId,
-              text: message.data.body,
-              username: slackChannelId,
-            }));
+      const account = await Account.findOne({'slack.team.id': teamId}).exec();
+      const params = querystring.stringify({
+        token: account.slack.accessToken,
+        channel: slackChannelId,
+        text: message.data.data.text
       });
+      return axios.post(`${SLACK_API_URL}/chat.postMessage`, params);
     }
   }
 
@@ -122,11 +117,11 @@ class SlackBroker {
   }
 
   createChannel(name, visitorId, teamId) {
-    return Account.findOne({ team_id: teamId }).exec().then((account) => {
+    return Account.findOne({ 'slack.team.id': teamId }).exec().then((account) => {
       if (!account) { return false; }
 
-      const token = account.access_token;
-      const botId = account.bot.bot_user_id;
+      const token = account.slack.accessToken;
+      // const botId = account.bot.bot_user_id;
 
       return axios.post(`${SLACK_API_URL}/channels.create`, querystring.stringify({ token, name }))
           .then((response) => {
@@ -134,7 +129,8 @@ class SlackBroker {
               winston.error('Failed to create channel');
             }
             const channelId = response.data.channel.id;
-            return this.addToChannel({ token, channelId, botId });
+            return channelId;
+            // return this.addToChannel({ token, channelId, botId });
           })
           .then((channelId) => {
             return new Visitor({

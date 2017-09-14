@@ -46,17 +46,18 @@ class ChindowBroker {
 
   onChindowMessage(socket, message) {
     if (message.visitorId) {
+      console.log(message.visitorId);
       Visitor.findOne({ visitorId: message.visitorId }).exec().then((result) => {
-        Visitor.update(
-          { visitorId: message.visitorId },
-          {
-            $set: {
-              lastConversation: {
-                started: Date.now(),
-                missed: false,
-              },
-            },
-          }).exec();
+        // Visitor.update(
+        //   { visitorId: message.visitorId },
+        //   {
+        //     $set: {
+        //       lastConversation: {
+        //         started: Date.now(),
+        //         missed: false,
+        //       },
+        //     },
+        //   }).exec();
         const { channelId } = result;
         const channelMessage = {
           type: 'text',
@@ -66,6 +67,8 @@ class ChindowBroker {
           }),
         };
         this.pub.publish('from:chindow', JSON.stringify(channelMessage));
+      }).catch(err => {
+        console.log(err);
       });
     }
   }

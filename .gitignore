@@ -3,3 +3,4 @@ dump.rdb
 .DS_Store
 public/build
 .env
+*.hot-update*
