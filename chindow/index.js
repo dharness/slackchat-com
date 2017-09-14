@@ -11,14 +11,29 @@ class App extends Component {
     this.state = { messages: [] };
     this.messageBroker = messageBroker;
     this.messageBroker.init();
+    this.messageBroker.onMessageReceived(this.onMessageReceived.bind(this));
     this.onMessageWasSent = this.onMessageWasSent.bind(this);
   }
 
+  onMessageReceived(message) {
+    console.log(message)
+    this.setState({
+      messages: [...this.state.messages, {
+        author: message.author,
+        type: 'text',
+        data: {
+          text: message.body
+        }
+      }]
+    });
+  }
+
   onMessageWasSent(message) {
+    console.log(message)
     this.messageBroker.sendMessage(message);
     this.setState({
       messages: [...this.state.messages, message]
-    })
+    });
   }
 
   render() {

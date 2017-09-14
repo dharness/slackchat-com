@@ -1,9 +1,11 @@
-import MESSAGE_TYPES from './messageTypes';
+import MESSAGE_TYPES from './../messaging/messageTypes';
 import io from 'socket.io-client';
 const CLIENT = MESSAGE_TYPES.CLIENT;
 const BROKER = MESSAGE_TYPES.BROKER;
 const SOCKET_URL = process.env.SC_SOCKET_URL;
 
+
+console.log(MESSAGE_TYPES);
 
 const messageBroker = {
 

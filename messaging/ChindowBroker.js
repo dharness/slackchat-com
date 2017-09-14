@@ -48,21 +48,23 @@ class ChindowBroker {
     if (message.visitorId) {
       console.log(message.visitorId);
       Visitor.findOne({ visitorId: message.visitorId }).exec().then((result) => {
-        // Visitor.update(
-        //   { visitorId: message.visitorId },
-        //   {
-        //     $set: {
-        //       lastConversation: {
-        //         started: Date.now(),
-        //         missed: false,
-        //       },
-        //     },
-        //   }).exec();
+        Visitor.update(
+          { visitorId: message.visitorId },
+          {
+            $set: {
+              lastConversation: {
+                started: Date.now(),
+                missed: false,
+              },
+            },
+          }).exec();
         const { channelId } = result;
         const channelMessage = {
           type: 'text',
-          data: Object.assign({}, message, {
+          data: Object.assign({}, message.data, {
             channelId,
+            teamId: message.teamId,
+            visitorId: message.visitorId,
             author: 'them',
           }),
         };

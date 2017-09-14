@@ -25,7 +25,8 @@ class SlackBroker {
     this.rtm = new RtmClient(botToken);
     this.channelMap = {};
     this.rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, this.onClientAuthenticated.bind(this));
-    this.rtm.on(CLIENT_EVENTS.RTM.RAW_MESSAGE, this.onSlackMessage.bind(this));
+    // this.rtm.on(CLIENT_EVENTS.RTM.RAW_MESSAGE, this.onSlackMessage.bind(this));
+    this.rtm.on('message', this.forwardMessageToChindow.bind(this));
     this.rtm.on(CLIENT_EVENTS.RTM.UNABLE_TO_RTM_START, this.onStartErr.bind(this));
     this.rtm.start();
   }
@@ -42,7 +43,7 @@ class SlackBroker {
     winston.info(`Logged in as ${rtmStartData.self.name} of team ${rtmStartData.team.name}, but not yet connected to a channel`);
   }
 
-  onSlackMessage(data) {
+  _onSlackMessage(data) {
     const message = JSON.parse(data);
     const { type, subtype } = message;
     if (type !== 'pong') {
@@ -69,6 +70,8 @@ class SlackBroker {
   }
 
   forwardMessageToChindow(message) {
+    if(message.bot_id) { return; }
+
     Visitor.findOne({ channelId: message.channel }).exec().then((visitor) => {
       if (visitor) {
         const channelMessage = {
@@ -91,11 +94,12 @@ class SlackBroker {
     const slackChannelId = message.data.channelId;
     if (slackChannelId) {
       const { teamId } = message.data;
+
       const account = await Account.findOne({'slack.team.id': teamId}).exec();
       const params = querystring.stringify({
         token: account.slack.accessToken,
         channel: slackChannelId,
-        text: message.data.data.text
+        text: message.data.text
       });
       return axios.post(`${SLACK_API_URL}/chat.postMessage`, params);
     }
