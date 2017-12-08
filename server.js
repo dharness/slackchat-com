@@ -30,7 +30,7 @@ app.get('/example', (req, res) => {
 
 const start = async () => {
   await connectDb();
-  const botTokens = await Account.find().distinct('slack.accessToken').exec();
+  const botTokens = await Account.find().distinct('slack.bot.botToken').exec();
   messageBrokers.init(io, botTokens);
   server.listen(PORT, () => {
     console.log(`COM-SERVER listening atll http://localhost:${PORT}`)

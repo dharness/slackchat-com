@@ -22,7 +22,7 @@ class SlackBroker {
 
 
     this.botToken = botToken;
-    this.rtm = new RtmClient(botToken);
+    this.rtm = new RtmClient(this.botToken);
     this.channelMap = {};
     this.rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, this.onClientAuthenticated.bind(this));
     // this.rtm.on(CLIENT_EVENTS.RTM.RAW_MESSAGE, this.onSlackMessage.bind(this));
